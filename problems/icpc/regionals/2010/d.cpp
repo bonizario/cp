@@ -35,14 +35,10 @@ void dijkstra(int n, int c, int s) {
 }
 
 int main() {
-    cin.tie(0);
-    cout.tie(0);
     ios_base::sync_with_stdio(0);
-
+    cout.tie(0);
+    cin.tie(0);
     int n, m, c, k, u, v, p;
-    ifstream cin("d.in");
-    ofstream cout("d.myout");
-
     while (true) {
         cin >> n >> m >> c >> k;
         if (n == 0 && m == 0 && c == 0 && k == 0) break;

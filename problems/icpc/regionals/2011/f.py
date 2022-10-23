@@ -1,5 +1,5 @@
 '''
-Time Complexity: NlogN
+Time Complexity: O(NlogN)
 Sort the reversed intervals in ascending order:
 [(1, 3), (2, 5), (4, 6)] -> [(3, 1), (5, 2), (6, 4)]
 Get the end of the first pair: (3, 1) -> 3
