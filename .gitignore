@@ -2,7 +2,7 @@
 /.vscode
 
 # Code Runner extension
-tempCodeRunnerFile.cpp
+/**/tempCodeRunnerFile.cpp
 
 # Executables
 /algorithms/**/*
