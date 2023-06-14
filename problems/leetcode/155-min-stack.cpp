@@ -1,28 +1,39 @@
 class MinStack {
    private:
-    vector<pair<int, int>> s;
+    class Node {
+       public:
+        int val;
+        int min_val;
+        Node* next;
+
+        Node(int val, int min_val, Node* next) {
+            this->val = val;
+            this->min_val = min_val;
+            this->next = next;
+        }
+    };
+    Node* head = nullptr;
 
    public:
-    MinStack() {
-    }
+    MinStack() {}
 
     void push(int val) {
-        if (s.empty()) {
-            s.push_back({val, val});
+        if (head == nullptr) {
+            head = new Node(val, val, nullptr);
         } else {
-            s.push_back({val, min(val, s.back().second)});
+            head = new Node(val, min(val, head->min_val), head);
         }
     }
 
     void pop() {
-        s.pop_back();
+        head = head->next;
     }
 
     int top() {
-        return s.back().first;
+        return head->val;
     }
 
     int getMin() {
-        return s.back().second;
+        return head->min_val;
     }
 };
