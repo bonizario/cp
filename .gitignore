@@ -10,6 +10,7 @@
 !/algorithms/**/*.c
 !/algorithms/**/*.py
 !/algorithms/**/*.cpp
+!/algorithms/**/*.md
 /problems/**/*
 !/problems/**/
 !/problems/**/*.c
