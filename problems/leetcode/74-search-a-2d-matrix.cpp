@@ -1,3 +1,4 @@
+// Binary Search Matrix as an Array
 class Solution {
     // Time Complexity: O(log(n*m))
     // Considering the matrix as an array
