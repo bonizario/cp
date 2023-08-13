@@ -1,13 +1,12 @@
 class Solution {
-    // TC: O(NM) -> each cell is visited at least once
-    // SC: O(NM) -> worst case all oranges are rotten
+    // TC: O(N * M) -> each cell is visited at least once
+    // SC: O(N * M) -> worst case all oranges are rotten
    public:
     int orangesRotting(vector<vector<int>>& grid) {
         int n = size(grid);
         if (n == 0) {
             return -1;
         }
-
         int m = size(grid[0]), fresh = 0, minutes = 0;
         queue<pair<int, int>> rotten;
         for (int i = 0; i < n; i++) {
@@ -19,14 +18,12 @@ class Solution {
                 }
             }
         }
-
-        vector<pair<int, int>> dxy = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         while (!rotten.empty() && fresh > 0) {
             minutes += 1;
             for (int i = 0, total = size(rotten); i < total; i++) {
                 auto [x, y] = rotten.front();
                 rotten.pop();
-                for (auto [dx, dy] : dxy) {
+                for (auto& [dx, dy] : vector<pair<int, int>>{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
                     int xx = x + dx, yy = y + dy;
                     if (xx < 0 || xx == n || yy < 0 || yy == m || grid[xx][yy] != 1) {
                         continue;

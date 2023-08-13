@@ -1,34 +1,21 @@
 class Solution {
    public:
-    vector<string> generateParenthesis(int n) {
-        int current;
-        deque<string> dq;
-        string s;
-        for (int i = 0; i < 2 * n; i++) {
-            if (i == 0) {
-                dq.push_back('(');
-                current = dq.size();
-                continue;
-            }
-            while (current--) {
-                s = dq.front(), dq.pop_front();
-                if (s.back() == '(') {
-                    if (count(s.begin(), s.end(), '(') < n) {
-                        dq.push_back(s + '(');
-                    }
-                    dq.push_back(s + ')');
-                } else {
-                    if (count(s.begin(), s.end(), '(') < n) {
-                        dq.push_back(s + '(');
-                    }
-                    if (count(s.begin(), s.end(), '(') > count(s.begin(), s.end(), ')')) {
-                        dq.push_back(s + ')');
-                    }
-                }
-            }
-            current = dq.size();
+    void backtrack(vector<string>& parenthesis, string s, int open, int close, int n) {
+        if (size(s) == 2 * n) {
+            parenthesis.push_back(s);
+            return;
         }
+        if (open < n) {
+            backtrack(parenthesis, s + "(", open + 1, close, n);
+        }
+        if (close < open) {
+            backtrack(parenthesis, s + ")", open, close + 1, n);
+        }
+    }
 
-        return vector<string>(dq.begin(), dq.end());
+    vector<string> generateParenthesis(int n) {
+        vector<string> parenthesis;
+        backtrack(parenthesis, "", 0, 0, n);
+        return parenthesis;
     }
 };

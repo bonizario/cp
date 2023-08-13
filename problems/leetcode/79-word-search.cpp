@@ -7,16 +7,13 @@ class Solution {
         if (i < 0 || i >= n || j < 0 || j >= m || board[i][j] != word[index]) {
             return false;
         }
-        char current = board[i][j];
         board[i][j] = '#';
-        if (dfs(board, i, j - 1, n, m, word, index + 1) ||
-            dfs(board, i, j + 1, n, m, word, index + 1) ||
-            dfs(board, i - 1, j, n, m, word, index + 1) ||
-            dfs(board, i + 1, j, n, m, word, index + 1)) {
-            return true;
-        }
-        board[i][j] = current;
-        return false;
+        bool status = dfs(board, i, j - 1, n, m, word, index + 1) ||
+                      dfs(board, i, j + 1, n, m, word, index + 1) ||
+                      dfs(board, i - 1, j, n, m, word, index + 1) ||
+                      dfs(board, i + 1, j, n, m, word, index + 1);
+        board[i][j] = word[index];
+        return status;
     }
 
     bool exist(vector<vector<char>>& board, string word) {
