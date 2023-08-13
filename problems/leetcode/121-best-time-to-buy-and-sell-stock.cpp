@@ -1,7 +1,7 @@
 class Solution {
    public:
     int maxProfit(vector<int>& prices) {
-        int min_buy = INT_MAX, max_profit = 0, n = prices.size();
+        int min_buy = INT_MAX, max_profit = 0;
         for (auto& price : prices) {
             min_buy = min(min_buy, price);
             max_profit = max(max_profit, price - min_buy);
