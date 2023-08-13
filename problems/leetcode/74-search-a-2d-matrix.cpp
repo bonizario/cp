@@ -1,8 +1,8 @@
 // Binary Search Matrix as an Array
 class Solution {
-    // Time Complexity: O(log(n*m))
+    // Time Complexity: O(log(N * M))
     // Considering the matrix as an array
-    // It could overflow if "n" and "m" were big enough
+    // It could overflow if "N" and "M" were big enough
    public:
     bool searchMatrix(vector<vector<int>>& matrix, int target) {
         int n = matrix.size(), m = matrix[0].size();

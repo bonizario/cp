@@ -1,5 +1,5 @@
 class Solution {
-    // Time Complexity: O(n+m)
+    // Time Complexity: O(N + M)
     // Considering the matrix as a binary search tree
    public:
     bool searchMatrix(vector<vector<int>>& matrix, int target) {
