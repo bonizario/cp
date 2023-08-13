@@ -51,13 +51,13 @@ def binary_search(array) -> int:
 
 ### 875. Koko Eating Bananas
 
-Koko loves to eat bananas. There are **n** piles of bananas, the **ith** pile has **piles[i]** bananas. The guards have gone and will come back in **h** hours.
+Koko loves to eat bananas. There are n piles of bananas, the ith pile has piles[i] bananas. The guards have gone and will come back in h hours.
 
-Koko can decide her bananas-per-hour eating speed of **k**. Each hour, she chooses some pile of bananas and eats **k** bananas from that pile. If the pile has less than **k** bananas, she eats all of them instead and will not eat any more bananas during this hour.
+Koko can decide her bananas-per-hour eating speed of k. Each hour, she chooses some pile of bananas and eats k bananas from that pile. If the pile has less than k bananas, she eats all of them instead and will not eat any more bananas during this hour.
 
 Koko likes to eat slowly but still wants to finish eating all the bananas before the guards return.
 
-Return the minimum integer **k** such that she can eat all the bananas within **h** hours.
+Return the minimum integer k such that she can eat all the bananas within h hours.
 
 Example 1:
 
@@ -109,7 +109,7 @@ class Solution {
 
 Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
 
-You must write an algorithm with **O(log n)** runtime complexity.
+You must write an algorithm with O(log n) runtime complexity.
 
 Example 1:
 
@@ -153,14 +153,14 @@ class Solution {
 
 ### 74. Search a 2D Matrix
 
-You are given an **m x n** integer matrix **matrix** with the following two properties:
+You are given an m x n integer matrix matrix with the following two properties:
 
 1. Each row is sorted in non-decreasing order.
 2. The first integer of each row is greater than the last integer of the previous row.
 
-Given an integer **target**, return **true** if **target** is in **matrix** or **false** otherwise.
+Given an integer target, return true if target is in matrix or false otherwise.
 
-You must write a solution in **O(log(m * n))** time complexity.
+You must write a solution in O(log(m * n)) time complexity.
 
 Example 1:
 
@@ -208,7 +208,7 @@ class Solution {
 
 ### 240. Search a 2D Matrix II
 
-Write an efficient algorithm that searches for a value **target** in an **m x n** integer matrix **matrix**. This matrix has the following properties:
+Write an efficient algorithm that searches for a value target in an m x n integer matrix matrix. This matrix has the following properties:
 
 1. Integers in each row are sorted in ascending from left to right.
 2. Integers in each column are sorted in ascending from top to bottom.
@@ -262,13 +262,13 @@ class Solution {
 
 ### 33. Search in Rotated Sorted Array
 
-There is an integer array **nums** sorted in ascending order (with distinct values).
+There is an integer array nums sorted in ascending order (with distinct values).
 
-Prior to being passed to your function, nums is **possibly rotated** at an unknown pivot index **k** (1 <= k < nums.length) such that the resulting array is [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]] (0-indexed). For example, [0,1,2,4,5,6,7] might be rotated at pivot index 3 and become [4,5,6,7,0,1,2].
+Prior to being passed to your function, nums is possibly rotated at an unknown pivot index k (1 <= k < nums.length) such that the resulting array is [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]] (0-indexed). For example, [0,1,2,4,5,6,7] might be rotated at pivot index 3 and become [4,5,6,7,0,1,2].
 
-Given the array **nums** after the possible rotation and an integer **target**, return the index of **target** if it is in nums, or -1 if it is not in nums.
+Given the array nums after the possible rotation and an integer target, return the index of target if it is in nums, or -1 if it is not in nums.
 
-You must write an algorithm with **O(log n)** runtime complexity.
+You must write an algorithm with O(log n) runtime complexity.
 
 Example 1:
 
@@ -356,7 +356,7 @@ Constraints:
     -5000 <= nums[i] <= 5000
     nums is sorted and rotated between 1 and n times.
 
-Follow up: This problem is similar to **Find Minimum in Rotated Sorted Array**, but nums may contain duplicates. Would this affect the runtime complexity? How and why? (Worst case becomes O(n))
+Follow up: This problem is similar to Find Minimum in Rotated Sorted Array, but nums may contain duplicates. Would this affect the runtime complexity? How and why? (Worst case becomes O(n))
 
 ```cpp
 class Solution {
@@ -461,7 +461,7 @@ Given an array of integers nums sorted in non-decreasing order, find the startin
 
 If target is not found in the array, return [-1, -1].
 
-You must write an algorithm with **O(log n)** runtime complexity.
+You must write an algorithm with O(log n) runtime complexity.
 
 Example 1:
 
@@ -629,7 +629,7 @@ You are given a sorted array consisting of only integers where every element app
 
 Return the single element that appears only once.
 
-Your solution must run in **O(log n)** time and **O(1)** space.
+Your solution must run in O(log n) time and O(1) space.
 
 Example 1:
 
@@ -684,7 +684,7 @@ An array arr is a mountain if the following properties hold:
 
 Given a mountain array arr, return the index i such that arr[0] < arr[1] < ... < arr[i - 1] < arr[i] > arr[i + 1] > ... > arr[arr.length - 1].
 
-You must solve it in **O(log(arr.length))** time complexity.
+You must solve it in O(log(arr.length)) time complexity.
 
 Example 1:
 
@@ -762,17 +762,21 @@ class Solution {
             int mid = left + (right - left) / 2;
             // sliding window arr[mid] ~ arr[mid + k]
 
-            // case 1: x - A[mid] < A[mid + k] - x, need to slide the window to the left
-            // ----x----A[mid]----------------------A[mid + k]---------
+            // case 1: x - A[mid] < A[mid + k] - x
+            // -x-A[mid]------A[mid + k]---
+            // need to slide the window to the left
 
-            // case 2: x - A[mid] < A[mid + k] - x, need to slide the window to the left
-            // ---------A[mid]----x-----------------A[mid + k]---------
+            // case 2: x - A[mid] < A[mid + k] - x
+            // ---A[mid]-x----A[mid + k]---
+            // need to slide the window to the left
 
-            // case 3: x - A[mid] > A[mid + k] - x, need to slide the window to the right
-            // ---------A[mid]-----------------x----A[mid + k]---------
+            // case 3: x - A[mid] > A[mid + k] - x
+            // ---A[mid]----x-A[mid + k]---
+            // need to slide the window to the right
 
-            // case 4: x - A[mid] > A[mid + k] - x, need to slide the window to the right
-            // ---------A[mid]----------------------A[mid + k]----x----
+            // case 4: x - A[mid] > A[mid + k] - x
+            // ---A[mid]------A[mid + k]-x-
+            // need to slide the window to the right
 
             if (x - arr[mid] <= arr[mid + k] - x) {
                 right = mid;
