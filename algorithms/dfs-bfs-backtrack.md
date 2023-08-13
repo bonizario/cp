@@ -608,3 +608,106 @@ class Solution {
     }
 };
 ```
+
+# Beecrowd
+
+### 1209. Festas de São Petersburgo
+
+Nestas festas de São Petersburgo é sempre muito importante que cada um dos participantes tenha pelo menos um certo número de amigos na rede social. E, ao mesmo tempo, desejamos convidar o maior número possível de pessoas de São Petersburgo desde que a restrição com relação ao número de amigos seja satisfeita. Tal restrição diz que, para ser convidada a festa, a pessoa precisa ter pelo menos um número K de amigos na lista de convidados.
+
+Sua tarefa neste problema é, dado o conjunto de pessoas da comunidade e a lista de suas relações, determinar quais devem ser chamadas para que a festa tenha a maior quantidade possível de participantes satisfazendo a restrição.
+
+**Entrada**
+
+A entrada é composta por diversas instâncias e termina com final de arquivo (EOF). A primeira linha de cada instância contém três inteiros N (1 ≤ N ≤ 1000), M e K (O ≤ K ≤ N) representando respectivamente o número de pessoas na comunidade, o número de relações de amizade nessa comunidade e o número mínimo de amigos convidados uma pessoa precisa ter para ser convidada. Cada pessoa da comunidade é identificada por números de 1 a N. Cada uma das próximas M linhas contém um par de pessoas indicando que elas são amigas na rede social.
+
+**Saída**
+
+Para cada instância imprima uma única linha contendo a lista das pessoas a serem convidadas separadas por um espaço em branco. A lista deve estar ordenada em ordem crescente. Caso ninguém possa ser convidado, imprima o número 0.
+
+    Exemplo de Entrada
+
+    6 6 2
+    1 3
+    3 5
+    2 3
+    2 4
+    4 6
+    6 2
+    6 6 3
+    1 2
+    2 3
+    3 1
+    4 5
+    5 6
+    6 4
+
+    Exemplo de Saída
+
+    2 4 6
+    0
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX_N = 1000;
+
+void dfs(vector<vector<int>>& adj, vector<int>& visited,
+         int node, int k, vector<int>& friends) {
+    if (visited[node] || friends[node] >= k) {
+        return;
+    }
+    visited[node] = true;
+    for (auto& u : adj[node]) {
+        friends[u]--;
+        if (friends[u] < k) {
+            dfs(adj, visited, u, k, friends);
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+
+    // freopen("1209.in", "r", stdin);
+    // freopen("1209.myout", "w", stdout);
+
+    int n, m, k, a, b;
+    vector<vector<int>> adj(MAX_N);
+    vector<int> friends(MAX_N), visited(MAX_N), invited(MAX_N);
+
+    while (cin >> n >> m >> k) {
+        for (int i = 0; i < n; i++) {
+            adj[i].clear(), friends[i] = 0, visited[i] = false;
+        }
+        while (m--) {
+            cin >> a >> b;
+            friends[--a] += 1, friends[--b] += 1;
+            adj[a].push_back(b), adj[b].push_back(a);
+        }
+        for (int i = 0; i < n; i++) {
+            dfs(adj, visited, i, k, friends);
+        }
+        int total_invited = 0;
+        for (int i = 0; i < n; i++) {
+            if (friends[i] >= k) {
+                invited[total_invited++] = i + 1;
+            }
+        }
+        if (total_invited == 0) {
+            cout << "0\n";
+            continue;
+        }
+        sort(invited.begin(), invited.begin() + total_invited);
+        for (int i = 0; i < total_invited - 1; i++) {
+            cout << invited[i] << " ";
+        }
+        cout << invited[total_invited - 1] << "\n";
+    }
+
+    return 0;
+}
+```
