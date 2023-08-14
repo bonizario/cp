@@ -672,9 +672,6 @@ int main() {
     cout.tie(0);
     cin.tie(0);
 
-    // freopen("1209.in", "r", stdin);
-    // freopen("1209.myout", "w", stdout);
-
     int n, m, k, a, b;
     vector<vector<int>> adj(MAX_N);
     vector<int> friends(MAX_N), visited(MAX_N), invited(MAX_N);
@@ -706,6 +703,125 @@ int main() {
             cout << invited[i] << " ";
         }
         cout << invited[total_invited - 1] << "\n";
+    }
+
+    return 0;
+}
+```
+
+### 2545. Manyfile (Cicle Detection with DFS, Maximum Distance between root and leaf with BFS)
+
+No ano de 2569, Vasya recebe de sua mãe um grandioso presente de aniversário, o código fonte do seu vídeo-game favorito, Aranha Paciente. Vasya corre direto ao seu computador, com 4096 núcleos de processamento, insere o disquete, digita ls no diretório do código e nota que ele é composto de N arquivos fonte e um Manyfile.
+
+Um Manyfile é como uma receita de bolo para compilar o código. Ao se executar o comando many, o Manyfile é lido e os arquivos começam a ser compilados, de forma que o máximo de núcleos de processamento são utilizados simultaneamente. Se o mundo fosse perfeito, este processo seria muito rápido, uma vez que cada arquivo fonte do jogo demora exatamente um minuto para ser compilado, mas infelizmente a compilação de alguns arquivos depende da conclusão de outros, impossibilitando que todos os arquivos sejam processados simultaneamente.
+
+Considerando a compilação da Aranha Paciente como terminada quando todos os seus N arquivos tiverem sido compilados e sabendo quais arquivos dependem de qual, escreva um programa que calcule para Vasya quantos minutos demorará para que a Aranha Paciente seja compilada.
+
+**Entrada**
+
+A entrada contém vários casos de teste. A primeira linha de cada caso contém o inteiro N (1 ≤ N ≤ 1000), o número de arquivos fonte da Aranha Paciente. Os arquivos são numerados de 1 a N. As N linhas seguintes descrevem os arquivos. A i-ésima linha contém um inteiro Mi (0 ≤ Mi < N) seguido de Mi inteiros com valor entre 1 e N e diferentes de i, representando o índice dos arquivos dos quais o arquivo i depende.
+
+A entrada termina com fim-de-arquivo (EOF).
+
+**Saída**
+
+Para cada caso de teste, imprima uma única linha contendo o tempo total em minutos que demorará para que a Aranha Paciente seja compilada. Caso seja impossível terminal a compilação, imprima -1.
+
+**Exemplo de Entrada**
+
+    2
+    1 2
+    1 1
+    3
+    0
+    1 3
+    0
+
+**Exemplo de Saída**
+
+    -1
+    2
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX_N = 1000;
+
+void dfs(vector<vector<int>>& adj, vector<int>& visited, int node, bool& has_cicle) {
+    // already fully visited or cicle found
+    if (visited[node] == 1 || has_cicle) {
+        return;
+    }
+    // reached a node that was being visited in the same dfs, it's a cicle
+    if (visited[node] == 0) {
+        has_cicle = true;
+        return;
+    }
+    visited[node] = 0;  // node is being visited
+    for (auto& u : adj[node]) {
+        dfs(adj, visited, u, has_cicle);
+    }
+    visited[node] = 1;  // node is fully visited
+}
+
+void bfs(vector<vector<int>>& adj, vector<int>& visited,
+         int node, vector<int>& distance, int& max_minutes_spent) {
+    queue<int> q;
+    q.push(node);
+    visited[node] = 1;
+    distance[node] = 1;  // the root node already spents 1 minute
+    while (!q.empty()) {
+        int v = q.front();
+        q.pop();
+        for (auto& u : adj[v]) {
+            if (!visited[u]) {
+                q.push(u);
+                visited[u] = true;
+                distance[u] = distance[v] + 1;
+                max_minutes_spent = max(max_minutes_spent, distance[u]);
+            }
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+
+    int n, m, u;
+    vector<vector<int>> adj(MAX_N);
+    vector<int> visited(MAX_N), is_root(MAX_N), distance(MAX_N);
+    while (cin >> n) {
+        for (int i = 0; i < n; i++) {
+            adj[i].clear(), visited[i] = -1, is_root[i] = 1;
+        }
+        for (int i = 0; i < n; i++) {
+            cin >> m;
+            for (int j = 0; j < m; j++) {
+                cin >> u;
+                u -= 1;
+                is_root[u] = 0;
+                adj[i].push_back(u);
+            }
+        }
+        bool has_cicle = false;
+        for (int i = 0; i < n; i++) {
+            dfs(adj, visited, i, has_cicle);
+        }
+        if (has_cicle) {
+            cout << "-1\n";
+            continue;
+        }
+        int max_minutes_spent = 1;  // if every node is a root node without dependencies
+        fill(visited.begin(), visited.begin() + n, 0);
+        for (int i = 0; i < n; i++) {
+            if (is_root[i]) {
+                bfs(adj, visited, i, distance, max_minutes_spent);
+            }
+        }
+        cout << max_minutes_spent << "\n";
     }
 
     return 0;
