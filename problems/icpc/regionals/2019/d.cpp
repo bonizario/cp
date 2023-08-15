@@ -31,9 +31,6 @@ int main() {
     cout.tie(0);
     cin.tie(0);
 
-    // freopen("e.in", "r", stdin);
-    // freopen("e.myout", "w", stdout);
-
     int n, k, superior;
     cin >> n >> k;
 

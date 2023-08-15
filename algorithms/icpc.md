@@ -237,3 +237,279 @@ def main():
 
 main()
 ```
+
+# 2019 Regionals
+
+### A. Arte Valiosa (Union-Find)
+
+A Mona Dura é uma das obras de arte mais valiosas do museu da Nlogônia. A famosa pintura fica em exibição num salão retangular de M por N metros. A entrada do salão fica em um canto, e a Mona fica no canto diagonalmente oposto à entrada.
+
+Para impedir roubos, o salão dispõe de sensores de movimento, que são ativados toda noite quando o museu fecha. Cada sensor tem um valor de sensibilidade S, tal que o sensor dispara um alarme se detectar qualquer movimento a no máximo S metros de distância dele.
+
+Um ladrão invadiu o museu esta noite com a intenção de roubar a Mona Dura. Para isso, ele precisa entrar no salão e chegar até a pintura sem ser detectado por nenhum sensor de movimento. Ou seja, ele tem que manter uma distância maior do que S i metros do i-ésimo sensor o tempo todo, para todos os sensores.
+
+O ladrão obteve acesso às plantas do museu, e portanto sabe as dimensões do salão e as coordenadas e sensibilidades de cada um dos sensores. Dadas essas informações, sua tarefa é determinar se o roubo é possı́vel ou não.
+
+**Entrada**
+
+A primeira linha contém três inteiros, M, N e K, as dimensões do salão e o número de sensores de movimento, respectivamente (10 ≤ M, N ≤ 104 , 1 ≤ K ≤ 1000). A entrada do salão fica no ponto (0, 0) e a pintura fica no ponto (M, N).
+
+Cada uma das K linhas seguintes corresponde a um dos K sensores e contém três inteiros, X, Y e S, onde (X, Y) indica a localização do sensor e S indica a sua sensibilidade (0 < X < M, 0 < Y < N, 0 < S ≤ 104). Todas as dimensões e coordenadas da entrada são em metros. É garantido que todos os sensores têm coordenadas distintas.
+
+**Saída**
+
+Seu programa deve produzir uma única linha contendo o caractere ‘S’ caso seja for possı́vel roubar a pintura, ou o caractere ‘N’ caso contrário.
+
+**Exemplos de Entrada**
+
+    10 22 2
+    4 6 5
+    6 16 5
+
+    10 10 2
+    3 7 4
+    5 4 4
+
+    100 100 3
+    40 50 30
+    5 90 50
+    90 10 5
+
+**Exemplos de Saída**
+
+    S
+
+    N
+
+    S
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+double calc_distance(int x1, int y1, int x2, int y2) {
+    return sqrt(pow((double)(x1 - x2), 2) + pow((double)(y1 - y2), 2));
+}
+
+int find(vector<int>& G, int a) {
+    if (a == G[a]) {
+        return a;
+    }
+    return G[a] = find(G, G[a]);
+}
+
+void unify(vector<int>& G, vector<int>& S, int a, int b) {
+    a = find(G, a), b = find(G, b);
+    if (S[a] >= S[b]) {
+        G[b] = a;
+        S[a] += S[b];
+    } else {
+        G[a] = b;
+        S[b] += S[a];
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+
+    int m, n, k, x, y, range;
+    cin >> m >> n >> k;
+    vector<vector<double>> distances(k + 4, vector<double>(k + 4));
+    vector<vector<int>> sensors(k, vector<int>(3));
+    for (int i = 0; i < k; i++) {
+        cin >> x >> y >> range;
+        sensors[i][0] = x, sensors[i][1] = y, sensors[i][2] = range;
+    }
+
+    for (int i = 0; i < k; i++) {
+        for (int j = i; j < k; j++) {
+            distances[i][j] = calc_distance(sensors[i][0], sensors[i][1], sensors[j][0], sensors[j][1]);
+        }
+    }
+    for (int i = 0; i < k; i++) {
+        distances[i][k] = calc_distance(sensors[i][0], sensors[i][1], 0, sensors[i][1]);      // LEFT
+        distances[i][k + 1] = calc_distance(sensors[i][0], sensors[i][1], m, sensors[i][1]);  // RIGHT
+        distances[i][k + 2] = calc_distance(sensors[i][0], sensors[i][1], sensors[i][0], n);  // TOP
+        distances[i][k + 3] = calc_distance(sensors[i][0], sensors[i][1], sensors[i][0], 0);  // BOTTOM
+    }
+
+    // DEBUG
+    // cout << "DISTANCES\n";
+    // for (int i = 0; i < k + 4; i++) {
+    //     for (int j = 0; j < k + 4; j++) {
+    //         cout << distances[i][j] << " ";
+    //     }
+    //     cout << "\n";
+    // }
+    // cout << "END\n";
+
+    vector<int> G(k + 4), S(k + 4);
+    for (int i = 0; i < k + 4; i++) {
+        G[i] = i, S[i] = 1;
+    }
+
+    for (int i = 0; i < k; i++) {
+        if (distances[i][k] <= sensors[i][2]) {
+            unify(G, S, i, k);
+        }
+        if (distances[i][k + 1] <= sensors[i][2]) {
+            unify(G, S, i, k + 1);
+        }
+        if (distances[i][k + 2] <= sensors[i][2]) {
+            unify(G, S, i, k + 2);
+        }
+        if (distances[i][k + 3] <= sensors[i][2]) {
+            unify(G, S, i, k + 3);
+        }
+    }
+
+    for (int i = 0; i < k; i++) {
+        for (int j = i + 1; j < k; j++) {
+            if (distances[i][j] <= (sensors[i][2] + sensors[j][2])) {
+                unify(G, S, i, j);
+            }
+        }
+    }
+
+    bool possible = true;
+    if (find(G, G[k]) == find(G, G[k + 1]) ||      // LEFT  <-> RIGHT
+        find(G, G[k + 2]) == find(G, G[k + 3]) ||  // TOP   <-> BOTTOM
+        find(G, G[k]) == find(G, G[k + 3]) ||      // LEFT  <-> BOTTOM
+        find(G, G[k + 1]) == find(G, G[k + 2])) {  // RIGHT <-> TOP
+        possible = false;
+    }
+
+    cout << (possible ? "S\n" : "N\n");
+
+    return 0;
+}
+```
+
+### D. Delação Premiada (DFS to compute tree ranks from root, DFS from leaves to root to compute unique visited nodes)
+
+#### Current solution uses 2 graphs, optimizations are most likely possible
+
+A máfia nlogoniana tem N membros no total, e cada um é identificado por um inteiro entre 1 e N , onde 1 é o ID do chefão. Além disso, todo membro é subordinado direto de um outro membro, exceto o chefão.
+
+Mesmo após meses de investigação, a polı́cia ainda não tem informação suficiente para prender nenhum membro da máfia por nenhum crime. Por isso, resolveram pedir a ajuda de um vidente: dado um membro da máfia, o vidente pode magicamente adivinhar os crimes que ele cometeu, e a polı́cia pode então confirmá-los através de interrogatório.
+
+Além disso, quando um mafioso nlogoniano é interrogado, ele não só admite os seus crimes, mas também delata os crimes de seu superior direto, em troca de uma pena mais leve. Se este já não tiver sido preso, a polı́cia pode interrogá-lo também, e ele vai então delatar o superior dele, e assim por diante, até chegarem no chefão.
+
+Infelizmente, o vidente só tem energia suficiente para adivinhar os crimes de no máximo K mafiosos, e a polı́cia quer usar seus poderes cuidadosamente pra prender o máximo possı́vel de bandidos. Dado o valor de K e a estrutura completa da máfia, qual a quantidade máxima de mafiosos que a polı́cia consegue prender?
+
+**Entrada**
+
+A primeira linha contém dois inteiros, N e K, onde N é o número de membros da máfia e K é o número máximo de mafiosos cujos crimes o vidente pode adivinhar (3 ≤ N ≤ 10^5 , 1 ≤ K < N). A segunda linha contém N − 1 inteiros, onde o i-ésimo deles identifica o superior direto do mafioso de ID i + 1.
+
+É garantido que todos os inteiros da segunda linha estão entre 1 e N, e que todos os membros da máfia são subordinados do chefão, direta ou indiretamente.
+
+**Saída**
+
+Seu programa deve produzir uma única linha com um inteiro representando o número máximo de mafiosos que a polı́cia pode prender.
+
+**Exemplos de Entrada**
+
+    8 2
+    1 1 2 3 4 4 6
+
+    10 3
+    1 1 2 2 3 3 4 4 5
+
+**Exemplos de Saída**
+
+    7
+
+    8
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+void dfs_ranks(vector<vector<int>>& inverse_adj, int node, vector<bool>& visited, unordered_map<int, int>& rank) {
+    if (visited[node]) {
+        return;
+    }
+    visited[node] = true;
+    if (node == 1) {
+        rank[node] = 1;
+    }
+    for (auto u : inverse_adj[node]) {
+        rank[u] = rank[node] + 1;
+        dfs_ranks(inverse_adj, u, visited, rank);
+    }
+}
+
+void dfs(vector<vector<int>>& adj, int node, vector<bool>& visited, int& current_seen) {
+    if (visited[node]) {
+        return;
+    }
+    visited[node] = true;
+    current_seen += 1;
+    for (auto u : adj[node]) {
+        dfs(adj, u, visited, current_seen);
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+
+    int n, k, superior;
+    cin >> n >> k;
+
+    vector<vector<int>> adj(n + 1);
+    vector<vector<int>> inverse_adj(n + 1);
+    unordered_map<int, bool> is_leaf;
+    unordered_map<int, int> rank;
+
+    for (int i = 1; i <= n; i++) {
+        is_leaf[i] = true;
+    }
+    rank[1] = 1;
+    for (int i = 1; i < n; i++) {
+        cin >> superior;
+        adj[i + 1].push_back(superior);
+        inverse_adj[superior].push_back(i + 1);
+        is_leaf[superior] = false;
+    }
+
+    vector<bool> visited(n + 1, false);
+    dfs_ranks(inverse_adj, 1, visited, rank);
+
+    vector<pair<int, int>> leaves;  // {rank, node_index}
+    for (int i = 1; i <= n; i++) {
+        if (is_leaf[i]) {
+            leaves.push_back({rank[i], i});
+        }
+        visited[i] = false;
+    }
+
+    sort(leaves.begin(), leaves.end(), greater<pair<int, int>>());
+
+    // DEBUG
+    // for (int i = 0; i < (int)leaves.size(); i++) {
+    //     cout << "rank=" << leaves[i].first << " i=" << leaves[i].second << "\n";
+    // }
+
+    vector<pair<int, int>> seen_with_dfs;
+
+    for (auto [r, i] : leaves) {
+        int current_seen = 0;
+        dfs(adj, i, visited, current_seen);
+        seen_with_dfs.push_back({current_seen, i});
+    }
+
+    sort(seen_with_dfs.begin(), seen_with_dfs.end(), greater<pair<int, int>>());
+
+    int ans = 0;
+    for (int i = 0; i < k; i++) {
+        ans += seen_with_dfs[i].first;
+    }
+    cout << ans << "\n";
+
+    return 0;
+}
+```

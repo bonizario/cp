@@ -22,33 +22,3 @@ def main():
     # pattern()
 
 main()
-
-'''
-group 5 bits
-11111 cannot use because len(group) is odd
-
-group 4 bits
-11110
-11101
-11011 cannot use because len(group) is odd
-10111
-01111
-
-group 3 bits
-11100
-11001
-10011
-00111
-
-group 2 bits
-11000
-10001 cannot use because len(group) is odd
-00011
-
-group 1 bit
-10000
-00001
-
-group 0 bits
-00000 cannot use because len(group) is odd
-'''

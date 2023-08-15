@@ -1,5 +1,8 @@
 def main():
     from math import ceil
+
     v, n = map(int, input().split())
-    print(' '.join(str(ceil(x*v*n/10)) for x in range(1, 10)))
+    print(' '.join(str(ceil(v * n * i / 100)) for i in range(10, 100, 10)))
+    # print(' '.join(str((v * n - 1) * i // 100 + 1) for i in range(10, 100, 10)))
+
 main()

@@ -28,9 +28,6 @@ int main() {
     cout.tie(0);
     cin.tie(0);
 
-    // freopen("a.in", "r", stdin);
-    // freopen("a.myout", "w", stdout);
-
     int m, n, k, x, y, range;
     cin >> m >> n >> k;
     vector<vector<double>> distances(k + 4, vector<double>(k + 4));
