@@ -409,3 +409,67 @@ class Solution {
     }
 };
 ```
+
+# Beecrowd
+
+### 1077. Infixa para Posfixa
+
+O Professor solicitou que você escreva um programa que converta uma expressão na forma infixa (como usualmente conhecemos) para uma expressão na forma posfixa. Como você sabe, os termos in (no meio) e pos (depois) se referem à posição dos operadores. O programa terá que lidar somente com operadores binários +,-,*,/,^, parênteses, letras e números. Um exemplo seria uma expressão como:
+`(A*B+2*C^3)/2*A`. O programa deve converter esta expressão (infixa) para a expressão posfixa: `AB*2C3^*+2/A*`.
+
+**Entrada**
+
+A primeira linha da entrada contém um valor inteiro N (N < 1000), que indica o número de casos de teste. Cada caso de teste a seguir é uma expressão válida na forma infixa, com até 300 caracteres.
+
+**Saída**
+
+Para cada caso, apresente a expressão convertida para a forma posfixa.
+
+**Exemplo de Entrada**
+
+    3
+    A*2
+    (A*2+c-d)/2
+    (2*4/a^b)/(2*c)
+
+**Exemplo de Saída**
+
+    A2*
+    A2*c+d-2/
+    24*ab^/2c*/
+
+```py
+def main():
+    # Time Complexity:  O(N), N is the length of the expression
+    # Space Complexity: O(N)
+    def iterative_infix_to_postfix(infix: str) -> str:
+        stack, postfix = [], ''
+        precedence = {'^': 2, '*': 1, '/': 1, '+': 0, '-': 0}
+        for i in infix:
+            if i.isalnum():
+                postfix += i
+            elif i == '(':
+                stack.append(i)
+            elif i == ')':
+                # until reaching '('
+                while stack[-1] != '(':
+                    # pop and append all operators that are on top of the stack
+                    postfix += stack.pop()
+                # pop remaining '('
+                stack.pop()
+            else:
+                # pop and append all operators with higher precedence than 'i'
+                while stack and stack[-1] != '(' and precedence[stack[-1]] >= precedence[i]:
+                    postfix += stack.pop()
+                # append current operator 'i'
+                stack.append(i)
+        # pop and append all remaining operators
+        postfix += ''.join(stack[::-1])
+        return postfix
+
+    for _ in range(int(input())):
+        infix = input()
+        print(iterative_infix_to_postfix(infix))
+
+main()
+```
