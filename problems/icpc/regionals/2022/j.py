@@ -1,33 +1,38 @@
 def main():
-    def get_cards():
-        cards = input().replace('11', '10').replace('12', '10').replace('13', '10')
-        return tuple(map(int, cards.split()))
-
-    def get_points(hand, board):
-        points = {i: i for i in range(1, 11)}
-        points[11] = points[12] = points[13] = 10
-        return sum(map(lambda x: points[x], hand + board))
+    cards = {1: 4, 2: 4, 3: 4, 4: 4, 5: 4, \
+             6: 4, 7: 4, 8: 4, 9: 4, 10: 16}
+    value = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, \
+             8: 8, 9: 9, 10: 10, 11: 10, 12: 10, 13: 10}
 
     n = int(input())
-    j = get_cards()
-    m = get_cards()
-    board = get_cards()
-    cards = {i: 0 for i in range(1, 14)}
-    for card in (j + m + board):
-        cards[card] += 1
-    j_points = get_points(j, board)
-    m_points = get_points(m, board)
-    ans = -1
-    if m_points >= j_points:
-        win_card = 23 - m_points
-        if win_card <= 10 and ((win_card == 10 and cards[win_card] < 16) or cards[win_card] < 4):
-            ans = win_card
+    john = list(map(int, input().split()))
+    mary = list(map(int, input().split()))
+    pile = list(map(int, input().split()))
+
+    for drawn in john + mary + pile:
+        cards[value[drawn]] -= 1
+
+    total_pile = sum(value[card] for card in pile)
+    total_john = sum(value[card] for card in john) + total_pile
+    total_mary = sum(value[card] for card in mary) + total_pile
+
+    mary_winning_card = 23 - total_mary
+    john_losing_card = 24 - total_john
+    while john_losing_card <= 10 and cards[john_losing_card] == 0:
+        john_losing_card += 1
+
+    mary_can_win = mary_winning_card <= 10 and cards[mary_winning_card] >= 1
+    john_can_lose = john_losing_card <= 10
+    mary_loses_if_john_loses = total_mary + john_losing_card > 23
+
+    if mary_can_win:
+        if john_can_lose and not mary_loses_if_john_loses:
+            print(min(mary_winning_card, john_losing_card))
+        else:
+            print(mary_winning_card)
+    elif john_can_lose and not mary_loses_if_john_loses:
+        print(john_losing_card)
     else:
-        for i in range(11):
-            win_card = 24 - j_points + i
-            if cards[win_card] < 4:
-                break
-        if win_card <= 10 and m_points + win_card <= 23:
-            ans = win_card
-    print(ans)
+        print('-1')
+
 main()
