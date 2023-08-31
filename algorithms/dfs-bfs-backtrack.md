@@ -172,6 +172,69 @@ class Solution {
 };
 ```
 
+### 1034. Festival de Estátuas de Gelo
+
+{...} Os comprimentos disponíveis dos blocos são {a1; a2; ...;  aN} e o comprimento que o artista deseja é M. O bloco de comprimento 1 é muito usado, por este motivo ele sempre aparece na lista de blocos disponíveis. Sua tarefa é determinar o número mínimo de blocos tal que a soma de seus comprimentos seja M.
+
+**Entrada**
+
+A entrada é composta por diversas instâncias. A primeira linha da entrada contém um inteiro T indicando o número de instâncias. A primeira linha de cada instância contém dois inteiros N (1 ≤ N ≤ 25) e M (1 ≤ M ≤ 1000000) representando o número de tipos de blocos e o comprimento desejado pelo artista, respectivamente. A próxima linha contém os inteiros a1; a2; ...; aN , onde (1 ≤ ai ≤ 100) para todo i (1,2,...N) separados por espaço.
+
+**Saída**
+
+Para cada instância, imprima o número mínimo de blocos necessários para obter um bloco de comprimento M.
+
+**Exemplo de Entrada**
+
+    2
+    6 100
+    1 5 10 15 25 50
+    2 103
+    1 5
+
+**Exemplo de Saída**
+
+    2
+    23
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX_INT = 9999999;
+
+int get_min_blocks(vector<int>& lengths, int n, int m) {
+    vector<int> dp(m + 1, MAX_INT);
+    dp[0] = 0;
+    for (int i = 0; i < n; i++) {
+        int k = lengths[i];
+        for (int j = k; j <= m; j++) {
+            dp[j] = min(dp[j], dp[j - k] + 1);
+        }
+    }
+    return dp[m];
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+
+    int t, n, m;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        vector<int> lengths(n);
+        for (int i = 0; i < n; i++) {
+            cin >> lengths[i];
+        }
+        sort(lengths.begin(), lengths.end());
+        cout << get_min_blocks(lengths, n, m) << "\n";
+    }
+    return 0;
+}
+```
+
 ### 79. Word Search
 
 Given an m x n grid of characters board and a string word, return true if word exists in the grid.
