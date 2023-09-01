@@ -617,6 +617,319 @@ int main() {
 }
 ```
 
+# 2013 Regionals
+
+### C. Chefe (DFS, Swap Nodes, Floyd-Warshall)
+
+As figuras abaixo mostra a cadeia de comando para alguns empregados, junto com suas idades.
+
+<img src="1469-UOJjpg" alt="" width="400" />
+
+Uma pessoa P1 pode gerenciar outra pessoa P2 diretamente (quando P1 é o superior imediato de P2) ou indiretamente (quando P1 gerencia diretamente uma pessoa P3 que gerencia P2 direta ou indiretamente). Por exemplo, na figura (a) acima, Alice gerencia David diretamente e Clara indiretamente. Uma pessoa não gerencia a si própria, nem direta nem indiretamente.
+
+Dadas a descrição da cadeia de comando na Iks e as idades de seus empregados, escreva um programa que execute uma série de instruções. Instruções podem ser de dois tipos: trocas de gerência e perguntas. Uma instrução de troca de gerência faz dois empregados A e B trocarem suas posições na cadeia de comando. Como exemplo, a figura (b) acima mostra a cadeia de comando resultante quando David e George trocam suas respectivas posições na cadeia de comando. Uma instrução de pergunta identifica um empregado A e deseja saber a idade do mais jovem gerente (direto ou indireto) de A na cadeia de comando. Por exemplo, no cenário da figura (a) acima a idade do(a) gerente mais jovem de Clara é 18 anos; já no cenário da figura (b), a idade do(a) gerente mais jovem de Clara é 21 anos.
+
+**Entrada**
+
+A entrada contém vários casos de teste. Cada caso de teste é composto de várias linhas. A primeira linha contém três inteiros N (1 ≤ N ≤ 500), M(0 ≤ M ≤ 60 × 10^3) e I(1 ≤ I ≤ 500), indicando respectivamente o número de empregados, o número de relações de gerência direta e o número de instruçõoes. Empregados são identificados por números de 1 a N. A segunda linha contém N inteiros Ki(1 ≤ Ki ≤ 100, para 1 ≤ i ≤ N), onde Ki indica a idade do empregado de número i.
+
+Cada uma das M linhas seguintes contém dois inteiros X e Y(1 ≤ X, Y ≤ N, X != Y) , indicando que X gerencia Y diretamente. Seguem-se I linhas, cada uma descrevendo uma instrução. Uma instruçãao de troca de gerência é descrita em uma linha contendo o identificador T seguido de dois inteiros A e B(1 ≤ A,B ≤ N), indicando os dois empregados que devem trocar seus lugares na cadeia de comando. Uma instrução de pergunta é descrita em uma linha contendo o identificador P seguido de um inteiro E(1 ≤ E ≤ N), indicando um empregado. A última instrução será sempre do tipo pergunta.
+
+O final da entrada é determinado por EOF (fim de arquivo).
+
+**Saída**
+
+Para cada instrução de pergunta seu programa deve imprimir uma linha contendo um único inteiro, a idade da pessoa mais jovem que gerencia (direta ou indiretamente) o empregado nomeado na pergunta. Se o empregado nomeado não possui um gerente, imprima o caractere ‘*’ (asterisco).
+
+**Exemplo de Entrada**
+
+    7 8 9
+    21 33 33 18 42 22 26
+    1 2
+    1 3
+    2 5
+    3 5
+    3 6
+    4 6
+    4 7
+    6 7
+    P 7
+    T 4 2
+    P 7
+    P 5
+    T 1 4
+    P 7
+    T 4 7
+    P 2
+    P 6
+
+**Exemplo de Saída**
+
+    18
+    21
+    18
+    18
+    *
+    26
+
+```cpp
+/*
+    Solution 1: 0.047s
+    DFS Time Complexity: O(V + E)
+    Swap Time Complexity: O(1)
+*/
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 501;
+const int POSITIVE_INFINITY = 1e3;
+
+bool visited[MAXN];
+vector<int> adj[MAXN];
+int age[MAXN], position[MAXN];
+
+int dfs(int x, int min_age) {
+    if (visited[x]) return min_age;
+    visited[x] = true;
+    for (auto v : adj[x]) {
+        min_age = dfs(v, min(age[v], min_age));
+    }
+    return min_age;
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+    int n, m, i, x, y, min_age;
+    char action;
+    while (cin >> n >> m >> i) {
+        for (int j = 1; j <= n; j++) {
+            cin >> age[j], position[j] = j, adj[j].clear();
+        }
+        while (m--) {
+            cin >> x >> y;
+            adj[y].push_back(x);
+        }
+        while (i--) {
+            cin >> ws >> action;
+            if (action == 'T') {
+                cin >> x >> y;
+                swap(age[position[x]], age[position[y]]);
+                swap(position[x], position[y]);
+            } else {
+                cin >> x;
+                for (int j = 1; j <= n; j++) {
+                    visited[j] = false;
+                }
+                min_age = dfs(position[x], POSITIVE_INFINITY);
+                if (min_age == POSITIVE_INFINITY) {
+                    cout << "*\n";
+                } else {
+                    cout << min_age << "\n";
+                }
+            }
+        }
+    }
+    return 0;
+}
+```
+
+```cpp
+/*
+    Solution 2: 0.210s
+    Floyd-Warshall (Transitive Closure) Time Complexity: O(V^3)
+    Lookup Time Complexity: O(V)
+    Swap Time Complexity: O(1)
+*/
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 501;
+const int POSITIVE_INFINITY = 1e3;
+
+int age[MAXN], position[MAXN], parent[MAXN][MAXN];
+
+void floyd_warshall(int n) {
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (parent[j][i]) {
+                for (int k = 1; k <= n; k++) {
+                    parent[j][k] |= parent[i][k];
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+    int n, m, i, x, y, min_age;
+    char action;
+    while (cin >> n >> m >> i) {
+        for (int j = 1; j <= n; j++)
+            for (int k = 1; k <= n; k++)
+                parent[j][k] = 0;
+        for (int j = 1; j <= n; j++) {
+            cin >> age[j], position[j] = j;
+        }
+        while (m--) {
+            cin >> x >> y, parent[x][y] = 1;
+        }
+        floyd_warshall(n);
+        while (i--) {
+            cin >> ws >> action;
+            if (action == 'T') {
+                cin >> x >> y;
+                swap(age[position[x]], age[position[y]]);
+                swap(position[x], position[y]);
+            } else {
+                cin >> x, x = position[x], min_age = POSITIVE_INFINITY;
+                for (int j = 1; j <= n; j++) {
+                    if (parent[position[j]][x] && age[position[j]] < min_age)
+                        min_age = age[position[j]];
+                }
+                if (min_age == POSITIVE_INFINITY) {
+                    cout << "*\n";
+                } else {
+                    cout << min_age << "\n";
+                }
+            }
+        }
+    }
+    return 0;
+}
+```
+
+### J. Caminhão ()
+
+A Nlogônia é um arquipélago ligado por várias pontes. Cada ilha do arquipélago pode conter várias sedes regionais e vários depósitos da SBC. Ao planejar as rotas, a SBC se deparou com um problema: por razões de segurança, cada ponte da Nlogônia tem um limite máximo de peso permitido para os veículos que trafegam sobre ela. Devido ao grande número de pontes na Nlogônia, e ao elevado peso da mercadoria transportada, o diretor de operações da SBC pediu que você escrevesse um programa que determina o maior peso bruto que pode ser transportado entre os depósitos e os locais de prova.
+
+**Entrada**
+
+A entrada contém vários casos de teste. A primeira linha de um caso de teste contém três inteiros N(2 ≤ N ≤ 2 x 10^4), M(1 ≤ M ≤ 10^5) e S(1 ≤ S ≤ 5 × 10^4), indicando, respectivamente, o número de ilhas da Nlogônia, o número de pontes que ligam as ilhas e o número de sedes. As ilhas nlogonianas são numeradas de 1 a N. Cada uma das M linhas seguintes descreve uma ponte. A descrição de cada ponte consiste de uma linha contendo três inteiros A, B(1 ≤ A,B ≤ N, A != B) e P(0 ≤ P ≤ 10^5), indicando as duas ilhas ligadas por aquela ponte e o peso máximo permitido naquela ponte, em toneladas.
+
+Todas as pontes são de mão dupla; cada par de ilhas é ligado por no máximo uma ponte; é possível ir de qualquer ilha para qualquer outra ilha utilizando apenas as pontes do arquipélago (mas pode ser preciso passar por outras ilhas primeiro). Cada uma das S linhas seguintes descreve uma sede.
+
+A descrição de cada sede consiste de uma linha contendo dois inteiros A e B, indicando, respectivamente, a ilha onde está a sede e a ilha onde está o depósito que irá fornecer os balões àquela sede. O final da entrada é determinado por EOF (fim de arquivo).
+
+**Saída**
+
+Para cada sede, na ordem em que elas foram descritas na entrada, seu programa deve imprimir uma linha contendo um único inteiro, indicando o maior peso bruto, em toneladas, que pode ser transportado por caminhão do depósito que irá fornecer os balões até ela.
+
+**Exemplo de Entrada**
+
+    4 5 4
+    1 2 9
+    1 3 0
+    2 3 8
+    2 4 7
+    3 4 4
+    1 4
+    2 1
+    3 1
+    4 3
+    4 5 2
+    1 2 30
+    2 3 20
+    3 4 10
+    4 1 40
+    2 4 50
+    1 3
+    1 2
+
+**Exemplo de Saída**
+
+    7
+    9
+    8
+    7
+    20
+    40
+
+```cpp
+/*
+    https://www.dropbox.com/s/q4aa8g0zctzbwnq/solucoes_regional_2013.pdf
+    Time Complexity: O(MlogM + SlogS)
+    Referring to sorting the edges and executing Kruskal's Algorithm with modified Union-Find
+*/
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef struct Edge {
+    int a, b, p;
+} Edge;
+
+const int MAXN = 20001;
+const int MAXM = 100001;
+const int MAXS = 50000;
+
+// Arrays required in Kruskal's Algorithms
+Edge edges[MAXM];      // Edge mst[MAXM];  // No need to save MST edges
+int G[MAXN], S[MAXN];  // Parents, Sizes
+// Arrays required to manipulate the queries
+int answers[MAXS];
+vector<int> ids[MAXN];
+pair<int, int> queries[MAXS];
+
+int find(int a) {
+    if (G[a] == a) return a;
+    return G[a] = find(G[a]);
+}
+
+void unify(int a, int b, int p) {
+    a = find(a), b = find(b);
+    if (a == b) return;
+    if (S[a] < S[b]) swap(a, b);
+    G[b] = a, S[a] += S[b];
+    for (auto id : ids[b]) {      // For each query that "b" participates
+        if (answers[id] == -1) {  // If query is not already answered
+            if (find(queries[id].first) == find(queries[id].second)) {
+                // If the other query participant is already part of the Connected Component (CC)
+                // The current edge is the smallest of the CC that is involved in the connection between them
+                // (Because the edges are sorted in descending order by weight)
+                answers[id] = p;
+            }
+        }
+        // Pushes the unanswered query into the root "a" (parent of "b")
+        if (answers[id] == -1) ids[a].push_back(id);
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+    int n, m, s, a, b;
+    while (cin >> n >> m >> s) {
+        for (int i = 1; i <= n; i++) {
+            G[i] = i, S[i] = 1, ids[i].clear();
+        }
+        for (int i = 1; i <= m; i++) {
+            cin >> edges[i].a >> edges[i].b >> edges[i].p;
+        }
+        for (int i = 0; i < s; i++) {
+            cin >> a >> b;
+            answers[i] = -1, queries[i].first = a, queries[i].second = b, ids[a].push_back(i), ids[b].push_back(i);
+        }
+        sort(edges + 1,
+             edges + m + 1,
+             [](const Edge& x, const Edge& y) { return x.p > y.p; });
+        for (int i = 1; i <= m; i++) {
+            if (find(edges[i].a) != find(edges[i].b)) {
+                unify(edges[i].a, edges[i].b, edges[i].p);
+            }
+        }
+        for (int i = 0; i < s; i++) {
+            cout << answers[i] << "\n";
+        }
+    }
+    return 0;
+}
+```
+
 # 2016 Regionals
 
 ### D. Divisores (Matemática)
