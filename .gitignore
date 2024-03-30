@@ -5,20 +5,12 @@
 /**/tempCodeRunnerFile.cpp
 
 # Executables
-/algorithms/**/*
-!/algorithms/**/
-!/algorithms/**/*.c
-!/algorithms/**/*.py
-!/algorithms/**/*.cpp
-!/algorithms/**/*.md
 /problems/**/*
 !/problems/**/
 !/problems/**/*.c
 !/problems/**/*.py
 !/problems/**/*.cpp
-/icpc/**/*
-!/icpc/**/
-!/icpc/**/*.c
-!/icpc/**/*.py
-!/icpc/**/*.cpp
+!/problems/**/*.md
+!/problems/**/*.js
+!/problems/**/*.ts
 /**/1.py
