@@ -11,40 +11,34 @@
 class Solution {
    public:
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        int result, digit, carry = 0;
+        int sum = l1->val + l2->val;
+        int carry = sum / 10, digit = sum % 10;
 
-        ListNode *head = nullptr, *tmp = nullptr, *trav = nullptr;
+        ListNode *result = new ListNode(digit), *p = result;
 
-        while (true) {
-            if (l1 == nullptr && l2 != nullptr)
-                result = l2->val + carry;
-            else if (l1 != nullptr && l2 == nullptr)
-                result = l1->val + carry;
-            else
-                result = l1->val + l2->val + carry;
+        l1 = l1->next, l2 = l2->next;
 
-            digit = result % 10;
-            carry = result / 10;
-
-            if (head == nullptr) {
-                head = new ListNode(digit);
-                trav = head;
-            } else {
-                tmp = new ListNode(digit);
-                trav->next = tmp;
-                trav = tmp;
+        while (l1 || l2) {
+            sum = 0;
+            if (l1 != nullptr) {
+                sum += l1->val;
+                l1 = l1->next;
             }
-
-            if (l1) l1 = l1->next;
-            if (l2) l2 = l2->next;
-            if (l1 == nullptr && l2 == nullptr) break;
+            if (l2 != nullptr) {
+                sum += l2->val;
+                l2 = l2->next;
+            }
+            sum += carry;
+            carry = sum / 10;
+            digit = sum % 10;
+            p->next = new ListNode(digit);
+            p = p->next;
         }
 
-        if (carry) {
-            tmp = new ListNode(carry, nullptr);
-            trav->next = tmp;
+        if (carry > 0) {
+            p->next = new ListNode(carry);
         }
 
-        return head;
+        return result;
     }
 };
