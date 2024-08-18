@@ -9,6 +9,6 @@ I've been studying using
 2. HackerRank
 3. Codeforces
 4. Beecrowd
-5. ICP's past problems
+5. Previous ICPC contests
 
 > _Mantra: progress is not possible without deviation from the norm_
